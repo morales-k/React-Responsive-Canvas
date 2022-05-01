@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react'
 
 function Canvas() {
-  const [playerX, setPlayerX] = useState(100);
-  const [playerY, setPlayerY] = useState(100);
+  const [mouseX, setmouseX] = useState(100);
+  const [mouseY, setmouseY] = useState(100);
   const canvas = useRef();
   const dpr = window.devicePixelRatio || 1;
   const radius = 50;
@@ -23,17 +23,17 @@ function Canvas() {
     };
   }, []);
 
-  // Redraw when player coords update.
+  // Redraw when mouse coords update.
   useEffect(() => {
     draw();
-  }, [playerX, playerY]);
+  }, [mouseX, mouseY]);
 
-  // Sets canvas and scales based on device pixel resolution.
+  // Sets canvas and scales based on device pixel ratio.
   function setupCanvas() {
     const rect = canvas.current.getBoundingClientRect();
     const ctx = canvas.current.getContext('2d');
 
-    // Scale the current canvas by device pixel resolution to fix blur.
+    // Scale the current canvas by device pixel ratio to fix blur.
     canvas.current.width = rect.width * dpr;
     canvas.current.height = window.innerHeight * dpr;
 
@@ -44,9 +44,9 @@ function Canvas() {
     return ctx;
   }
   
-  const player = (ctx, playerX, playerY) => {
+  const circle = (ctx, mouseX, mouseY) => {
     ctx.beginPath();
-    ctx.arc(playerX, playerY, radius, 0, 2*Math.PI, false);
+    ctx.arc(mouseX, mouseY, radius, 0, 2*Math.PI, false);
     ctx.fillStyle = '#299a9c';
     ctx.fill();
   };
@@ -59,15 +59,15 @@ function Canvas() {
     canvas.height = rect.height * dpr;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    player(ctx, playerX, playerY);
+    circle(ctx, mouseX, mouseY);
   }
 
-  // Updates player coordinates & detects if player touches edge.
-  function trackPlayer(e) {
+  // Updates mouse coordinates & detects if mouse touches edge.
+  function trackmouse(e) {
     const rect = canvas.current.getBoundingClientRect();
 
-    setPlayerX(e.clientX);
-    setPlayerY(e.clientY);
+    setmouseX(e.clientX);
+    setmouseY(e.clientY);
 
     // Add radius so outer edge is detected instead of center.
     if (e.clientX <= 0 + radius) {
@@ -88,7 +88,7 @@ function Canvas() {
   }
 
   return (
-    <canvas id="canvas" ref={canvas} onMouseMove={(e) => trackPlayer(e)} />
+    <canvas id="canvas" ref={canvas} onMouseMove={(e) => trackmouse(e)} />
   )
 }
 
