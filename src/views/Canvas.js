@@ -44,6 +44,7 @@ function Canvas() {
     return ctx;
   }
   
+  // Circle moves with mouseXY coords.
   const circle = (ctx, mouseX, mouseY) => {
     ctx.beginPath();
     ctx.arc(mouseX, mouseY, radius, 0, 2*Math.PI, false);
@@ -65,25 +66,24 @@ function Canvas() {
   // Updates mouse coordinates & detects if mouse touches edge.
   function trackmouse(e) {
     const rect = canvas.current.getBoundingClientRect();
-
-    setmouseX(e.clientX);
-    setmouseY(e.clientY);
-
-    // Add radius so outer edge is detected instead of center.
-    if (e.clientX <= 0 + radius) {
-      console.log('zero X');
-    }
-
-    if (e.clientY <= 0 + radius) {
-      console.log('zero Y');
-    }
-
-    if (e.clientX >= rect.width - radius) {
-      console.log('max X');
-    }
-
-    if (e.clientY >= rect.height - radius) {
-      console.log('max Y');
+    const leftEdgeCollision = e.clientX <= radius ? true : false;
+    const rightEdgeCollision = e.clientX >= rect.width - radius ? true : false;
+    const topEdgeCollision = e.clientY <= radius ? true : false;
+    const bottomEdgeCollision = e.clientY >= rect.height - radius ? true : false;
+    
+    // Reset coords if mouse touches edge.
+    if (leftEdgeCollision) {
+      setmouseX(radius);
+    } else if (topEdgeCollision) {
+      setmouseY(radius);
+    } else if (rightEdgeCollision) {
+      setmouseX(rect.width - radius);
+    } else if (bottomEdgeCollision) {
+      setmouseY(rect.height - radius);
+    } else {
+      // In bounds. Update coords.
+      setmouseX(e.clientX);
+      setmouseY(e.clientY);
     }
   }
 
